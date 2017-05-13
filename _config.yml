@@ -1,0 +1,32 @@
+name: John's Blog
+email: jiao.xuejiao@gmail.com
+author: John Xue
+url: https://caser789.github.io/
+resume_site: https://caser789.github.io/Resume.io/
+github: https://github.com/caser789/
+baseurl: ""
+description: 
+meta_description: 
+motto: 
+banner: 
+
+#permalink: /:categories/:year/:month/:day/:title/
+permalink: /:year/:month/:day/:title/
+paginate: 10
+
+exclude: ['README.md', 'Gemfile.lock', 'Gemfile', 'Rakefile']
+
+github_username: caser789
+highlighter: Pygments
+
+# Build settings
+markdown: kramdown
+baidu_analysis: 
+
+FB:
+  comments :
+    provider : duoshuo
+    duoshuo:
+        short_name : luoyan35714
+    disqus :
+        short_name : freudkang
