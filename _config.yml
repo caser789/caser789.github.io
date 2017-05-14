@@ -25,8 +25,8 @@ baidu_analysis:
 
 FB:
   comments :
-    provider : duoshuo
+    provider : disqus
+    disqus :
+        short_name : disqus_bZAt0Q1uhZ
     duoshuo:
         short_name : luoyan35714
-    disqus :
-        short_name : freudkang
