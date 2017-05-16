@@ -74,6 +74,7 @@ if __name__ == '__main__':
 
 * [tutorial](http://boto3.readthedocs.io/en/latest/guide/dynamodb.html#updating-item)
 * [source code](https://github.com/boto/boto3/blob/develop/boto3/dynamodb/conditions.py)
+* [boto3](https://github.com/boto/boto3/blob/develop/boto3/session.py)
 
 [jekyll]:      http://jekyllrb.com
 [jekyll-gh]:   https://github.com/jekyll/jekyll
