@@ -18,6 +18,7 @@ python -m unittest discover
 python -m unittest discover -s start_dir
 python -m unittest discover -t top_dir
 python -m unittest discover -p file_pattern
+python -m unittest discover -p *_test.py
 python -m unittest discover -s sub_dir -t current_dir
 ```
 
@@ -124,6 +125,22 @@ self.assertRaises(exception, callable, *args, **kw)
 self.fail(msg)
 ```
 
+## addCleanup
+
+```
+class SomeTest2(unittest.TestCase):
+    def setUp(self):
+        connect_to_db()
+        self.addCleanup(self.disconnect_db)
+        connect_to_server()
+        self.addCleanup(self.disconnect_server)
+
+    def disconnect_db(self):
+        disconnect_from_db()
+
+    def disconnect_server(self):
+        disconnect_from_server()
+```
 
 [jekyll]:      http://jekyllrb.com
 [jekyll-gh]:   https://github.com/jekyll/jekyll
