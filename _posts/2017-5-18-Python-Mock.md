@@ -173,6 +173,37 @@ def test_executing_action_prints_message(self, mock_print):
     mock_print.assert_called_with("GOOG > $10")
 ```
 
+## use fixture instead of decorator
+```
+@mock.patch.object(smtplib, "SMTP")
+class EmailActionTest(unittest.TestCase):
+    def setUp(self):
+        self.action = EmailAction(to="abs@163.com")
+
+    def test_connection_closed_after_sending_mail(self, mock_smtp_class):
+        mock_smtp = mock_smtp_class.return_value
+        self.action.execute("MSFT has crossed $10 price level")
+        mock_smtp.send_message.assert_called_with(mock.ANY)
+        self.assertTrue(mock_smtp.quit.called)
+        mock_smtp.assert_has_calls([mock.call.send_message(mock.ANY), mock.call.quit()])
+```
+
+```
+class EmailActionTest(unittest.TestCase):
+    def setUp(self):
+        patcher = mock.patch("smtplib.SMTP")
+        self.addCleanup(patcher.stop)
+        self.mock_smtp_class = patcher.start()
+        self.mock_smtp = self.mock_smtp_class.return_value
+        self.action = EmailAction(to="abs@163.com")
+
+    def test_connection_closed_after_sending_mail(self):
+        self.action.execute("MSFT has crossed $10 price level")
+        self.mock_smtp.send_message.assert_called_with(mock.ANY)
+        self.assertTrue(self.mock_smtp.quit.called)
+        self.mock_smtp.assert_has_calls([mock.call.send_message(mock.ANY), mock.call.quit()])
+```
+
 [jekyll]:      http://jekyllrb.com
 [jekyll-gh]:   https://github.com/jekyll/jekyll
 [jekyll-help]: https://github.com/jekyll/jekyll-help
