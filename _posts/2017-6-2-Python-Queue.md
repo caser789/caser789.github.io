@@ -1,14 +1,44 @@
 ---
 layout: post
-title: Usage of queue in python
+title: Access the same resource with multi-threads in python
 date:   2017-06-02 03:18:01 +0100
-categories: python queue thread
-tag: queue
+categories: python queue thread lock gevent
+tag: lock
 ---
 
 * content
 {:toc}
 
+
+## Use a lock to access the same resource in multi-threads
+
+```python
+from gevent import sleep
+from gevent.pool import Pool
+from gevent.lock import Semaphore
+
+sem = Semaphore(2)
+
+
+def worker1(n):
+    sem.acquire()
+    print('Worker %i acquired semaphore' % n)
+    sleep(0)
+    sem.release()
+    print('Worker %i released semaphore' % n)
+
+
+def worker2(n):
+    with sem:
+        print('Worker %i acquired semaphore' % n)
+        sleep(0)
+    print('Worker %i released semaphore' % n)
+
+
+pool = Pool()
+pool.map(worker1, xrange(0, 2))
+pool.map(worker2, xrange(3, 6))
+```
 
 ## Use a queue to access the same resource in multi-threads
 ```python
