@@ -83,6 +83,37 @@ main(int argc, char **argv) {
 }
 ```
 
+## socket wrapper
+```c
+int
+Socket(int family, int type, int protocol) {
+    int n;
+    if ( (n = socket(family, type, protocol)) < 0)
+        err_sys("socket error")
+    return (n);
+}
+```
+## error num wrapper
+
+> thread functions do not set the standard Unix errno variable when an error occurs; instead, the errno value is the return value of the function.
+
+```c
+int n;
+if ( (n = pthread_mutex_lock(&ndone_mutex)) != 0)
+    errno = n, err_sys("pthread_mutex_lock error");
+```
+```c
+void
+Pthread_mutex_lock(pthread_mutex_t *mptr) {
+    int n;
+    if ( (n = pthread_mutex_lock(mptr)) == 0)
+        return;
+    errno = n;
+    err_sys("pthread_mutex_lock error");
+}
+
+Pthread_mutex_lock(&ndone_mutex);
+```
 ## exp
 
 ### assign and compare
@@ -110,6 +141,71 @@ if ( (sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 
 * presentation to numeric
 * convert 206.62.226.35 into the proper format
+
+## server
+```c
+# include "unp.h"
+# include <time.h>
+
+int
+main(int argc, char **argv) {
+    int listenfd, connfd;
+    struct socketaddr_in servaddr;
+    char buff[MAXLINE];
+    time_t ticks;
+
+    listenfd = Socket(AF_INET, SOCK_STREAM, 0);
+    bzeros(&servaddr, sizeof(servaddr));
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    servaddr.sin_port = htons(13);
+
+    Bind(listenfd, (SA *) &servaddr, sizeof(servaddr));
+
+    Listen(listenfd, LISTENQ);
+
+    for ( ; ; ) {
+        connfd = Accept(listenfd, (SA *) NULL, NULL);
+        ticks = time(NULL);
+        snprintf(buff, sizeof(buff), "%.24s\r\n", ctime(&ticks));
+        Write(connfd, buff, strlen(buff));
+        Close(connfd);
+    }
+}
+```
+### infinite loop
+
+```c
+for ( ; ; ) {
+}
+```
+
+### time
+
+returns the number of seconds since the Unix Epoch: 00:00:00 January 1, 1970, Coordinated Universal Time (UTC)
+
+### ctime
+
+converts this integer value into a human-readable string such as
+`Mon May 26 20:58:40 2003`
+
+### snprintf
+
+* `A carriage return and linefeed are appended to the string by snprintf`
+* check buf not overflow
+* dangerouse: `gets`, `strcat`, `strcpy`, use `fgets`, `strncat`, `strncpy` instead, even better `strlcat`, `strlcpy`
+
+### server
+* iterative server
+* concurrent server
+
+### netstat
+
+netstat -ni
+netstat -nr  show route table
+### ifconfig
+ifconfig eth0
+
 
 
 [jekyll]:      http://jekyllrb.com
