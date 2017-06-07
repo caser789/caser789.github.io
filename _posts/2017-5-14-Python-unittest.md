@@ -142,6 +142,32 @@ class SomeTest2(unittest.TestCase):
         disconnect_from_server()
 ```
 
+## mock attribute
+
+```python
+@ddt.data("id", "artStyle", "bodyshape", "clothesChanged", "clothesID", "gender", "name", "changedOrder", "avatarUnits")
+@mock.patch('dock_zmoji.view.zmoji.Zmoji')
+@mock.patch('dock.web.helpers.g')
+def test_avatars_put_parameter_error_by_post_pop_units(self, key, mock_g, mock_Zmoji):
+    req_data = copy.deepcopy(PUT_REQ_DATA)
+    url = '/zmoji/avatars/put'
+    for avatar in req_data['avatars']:
+        avatar['selectionData'].pop(key, None)
+    mock_g_config = {
+        'account': mock.MagicMock(**PUT_REQ_DATA),
+        'jsondata': copy.deepcopy(req_data)
+    }
+    with mock.patch('dock_zmoji.view.zmoji.g', **mock_g_config) as mock_login_g:
+        mock_login_g.account = mock.MagicMock()
+        mock_zmoji = mock_Zmoji.return_value
+        resp = self.app.post(url, data=self.encrypt_request(req_data))
+        mock_Zmoji.assert_called_once()
+        mock_zmoji.put_avatars.assert_not_called()
+        resp_data = json.loads(resp.data)
+        self.assertEqual(resp_data['meta']['code'], 400)
+
+```
+
 [jekyll]:      http://jekyllrb.com
 [jekyll-gh]:   https://github.com/jekyll/jekyll
 [jekyll-help]: https://github.com/jekyll/jekyll-help
