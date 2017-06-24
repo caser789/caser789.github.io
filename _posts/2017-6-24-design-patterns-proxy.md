@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Design patterns: proxy
+title: Design patterns proxy
 date:   2017-06-24 16:18:01 +0800
 categories: pattern design proxy
 tag: pattern
