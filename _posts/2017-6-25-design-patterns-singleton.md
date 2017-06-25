@@ -85,6 +85,11 @@ if __name__ == '__main__':
     main()
 ```
 
+## refs
+
+https://stackoverflow.com/questions/6760685/creating-a-singleton-in-python
+
+
 [jekyll]:      http://jekyllrb.com
 [jekyll-gh]:   https://github.com/jekyll/jekyll
 [jekyll-help]: https://github.com/jekyll/jekyll-help
