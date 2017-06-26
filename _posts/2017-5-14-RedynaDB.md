@@ -80,6 +80,168 @@ index。Global secondary index 实质上是另外一张 table, 只不过与主 t
 * [Key Concept](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html)
 * [Data Type](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBMapper.DataTypes.html)
 
+# examples
+
+
+## primary key 由 hashkey 构成
+
+### 需求
+
+* user register, 保存 user email, password_hash, name 信息
+* user login, 验证 user email 与 password_hash
+
+### 表设计
+
+```
+from dock.redynadb.model import RedynaModel
+
+class User(RedynaModel):
+    __table__ = 'user'
+    __hash_key__ = 'email'
+    __schema__ = {
+        'email': unicode,
+        'name': unicode,
+        'password_hash': unicode
+     }
+    __key_shortens__ = {
+        'email': 'em',
+        'name': 'nm',
+        'password_hash': 'pwh'
+    }
+```
+
+## primary key 由 hashkey 和 rangekey 构成
+
+### 需求
+
+* 保存一个 post 信息
+* 得到一个 email 下所有的 posts
+* 得到一个 email 下 post_id 最大的100个 posts
+* 得到一个 email 下一个 post_id 对应的 post
+
+### 表设计
+
+```
+from dock.redynadb.model import RedynaModel
+
+class Post(RedynaModel):
+    __table__ = 'post'
+    __hash_key__ = 'email'
+    __range_key__ = 'post_id'
+    __schema__ = {
+        'email': unicode,
+        'title': unicode,
+        'content': unicode,
+        'post_id': int,
+        'updated_time': int,
+        'created_time': int
+    }
+    __key_shortens__ = {
+        'email': 'em',
+        'title': 'tt',
+        'content': 'ctn',
+        'post_id': 'pd',
+        'updated_time': 'ut',
+        'created_time': 'ct'
+    }
+```
+
+## local secondary index 示例
+
+### 需求
+
+* 保存一个 post 信息
+* 得到一个 email 下所有的 posts
+* 得到一个 email 下 post_id 最大的100个 posts
+* 得到一个 email 下 updated_time 最大的100个 posts
+* 得到一个 email 下一个 post_id 对应的 post
+
+### 表设计
+
+```
+from dock.redynadb.model import RedynaModel
+
+class Post(RedynaModel):
+    __table__ = 'post'
+    __hash_key__ = 'email'
+    __range_key__ = 'post_id'
+    __schema__ = {
+        'email': unicode,
+        'title': unicode,
+        'content': unicode,
+        'post_id': int,
+        'updated_time': int,
+        'created_time': int
+    }
+    __local_indexes__ = {
+        'updated_time': {
+            'hashkey': 'email',
+            'rangekey': 'updated_time',
+            'type': 'all'
+        }
+    }
+    __key_shortens__ = {
+        'email': 'em',
+        'title': 'tt',
+        'content': 'ctn',
+        'post_id': 'pd',
+        'updated_time': 'ut',
+        'created_time': 'ct'
+    }
+```
+
+## global secondary index 示例
+
+### 需求
+
+* 保存一个 post 信息
+* 得到一个 email 下所有的 posts
+* 得到一个 email 下 post_id 最大的100个 posts
+* 得到一个 email 下 updated_time 最大的100个 posts
+* 得到一个 email 下一个 post_id 对应的 post
+* 得到一个 post_id 对应的 post
+
+### 表设计
+
+```
+from dock.redynadb.model import RedynaModel
+
+class Post(RedynaModel):
+    __table__ = 'post'
+    __hash_key__ = 'email'
+    __range_key__ = 'post_id'
+    __schema__ = {
+        'email': unicode,
+        'title': unicode,
+        'content': unicode,
+        'post_id': int,
+        'updated_time': int,
+        'created_time': int
+    }
+    __local_indexes__ = {
+        'updated_time': {
+            'hashkey': 'email',
+            'rangekey': 'updated_time',
+            'type': 'all'
+        }
+    }
+    __global_indexes__ = {
+        'post_id': {
+            'hashkey': 'post_id',
+            'type': 'all'
+        }
+    }
+    __key_shortens__ = {
+        'email': 'em',
+        'title': 'tt',
+        'content': 'ctn',
+        'post_id': 'pd',
+        'updated_time': 'ut',
+        'created_time': 'ct'
+    }
+```
+
+
 
 [jekyll]:      http://jekyllrb.com
 [jekyll-gh]:   https://github.com/jekyll/jekyll
