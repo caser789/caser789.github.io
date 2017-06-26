@@ -81,6 +81,60 @@ if __name__ == '__main__':
     main()
 ```
 
+## example
+```
+class Stock(object):
+    def buy(self):
+        print 'buy stock'
+
+    def sell(self):
+        print 'sell stock'
+
+
+class Bond(object):
+    def get(self):
+        print 'get bond'
+
+    def set(self):
+        print 'set bond'
+
+
+class Debt(object):
+    def load(self):
+        print 'load debt'
+
+    def dump(self):
+        print 'dump debt'
+
+
+class Fund():
+
+    def __init__(self):
+        self.stock = Stock()
+        self.bond = Bond()
+        self.debt = Debt()
+
+    def buy(self):
+        self.stock.buy()
+        self.bond.set()
+        self.debt.load()
+
+    def sell(self):
+        self.stock.sell()
+        self.bond.get()
+        self.debt.dump()
+
+
+def main():
+    fund = Fund()
+    fund.buy()
+    fund.sell()
+
+if __name__ == "__main__":
+    main()
+```
+
+
 [jekyll]:      http://jekyllrb.com
 [jekyll-gh]:   https://github.com/jekyll/jekyll
 [jekyll-help]: https://github.com/jekyll/jekyll-help
