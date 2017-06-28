@@ -16,10 +16,14 @@ tag: pattern
 ## 针对的问题
 
 
-## 4种场景
+## examples
+
+1. Windows task manager
 
 
 ## 其他
+
+eager vs lazy
 
 
 ## 与其他模式关系
@@ -80,6 +84,99 @@ def main():
     m2 = MyClass()
     assert m1 is m2
 
+
+if __name__ == '__main__':
+    main()
+```
+
+### windows task manager
+```
+class Singleton(type):
+
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+
+class TaskManager(object):
+    __metaclass__ = Singleton
+
+    def get_processes(self):
+        print 'a lot of processes'
+
+    def get_services(self):
+        print 'loads of servies'
+
+
+def main():
+    m1 = TaskManager()
+    m2 = TaskManager()
+    assert m1 is m2
+    m1.get_processes()
+    m2.get_processes()
+    m1.get_services()
+    m2.get_services()
+
+
+if __name__ == '__main__':
+    main()
+```
+
+### load balancer
+
+```python
+import random
+
+
+class Singleton(type):
+
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+
+class LoadBalancer(object):
+
+    __metaclass__ = Singleton
+
+    def __init__(self):
+        self.servers = set()
+
+    def add_server(self, server):
+        self.servers.add(server)
+
+    def remove_server(self, server):
+        self.servers.remove(server)
+
+    def get_server(self):
+        if self.servers:
+            # return random.sample((self.servers), 1)[-1]
+            return random.choice(tuple(self.servers))
+
+
+def main():
+    lb1 = LoadBalancer()
+    lb2 = LoadBalancer()
+    lb3 = LoadBalancer()
+    lb4 = LoadBalancer()
+
+    assert lb1 is lb2
+    assert lb3 is lb2
+    assert lb4 is lb2
+
+    lb1.add_server('Server 1')
+    lb1.add_server('Server 2')
+    lb1.add_server('Server 3')
+    lb1.add_server('Server 4')
+
+    for i in range(20):
+        print 'dispatch request to %s' % lb1.get_server()
 
 if __name__ == '__main__':
     main()
