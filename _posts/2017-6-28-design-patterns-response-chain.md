@@ -11,11 +11,14 @@ tag: pattern
 
 
 ## 目标
-
+1. 一个入口，多个 handler
+2. client launch and leave
 ## 针对的问题
-## 4种场景
 ## 其他
 ## 与其他模式关系
+1. Chain of Responsibility, Command, Mediator, Observer 都是为了分离 sender from receiver
+2. 可以用 Command 代表 request object
+3. 与 composite 联用，a component's parent be its successor
 ## 实现
 
 ```python
@@ -23,26 +26,50 @@ import abc
 
 
 class Handler(object):
+    """
+    Define an interface for handling requests.
+    Implement the successor link.
+    """
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self):
-        self.successor = None
-
-    def set_successor(self, successor):
-        self.successor = successor
+    def __init__(self, successor=None):
+        self._successor = successor
 
     @abc.abstractmethod
     def handle_request(self, request):
         pass
 
 
-class ConcreteHandler(Handler):
+class ConcreteHandler1(Handler):
+    """
+    Handle request, otherwise forward it to the successor.
+    """
 
     def handle_request(self, request):
         if 'condition met':
             'handle request'
-        else:
-            self.successor.handle_request(request)
+        elif self._successor is not None:
+            self._successor.handle_request(request)
+
+
+class ConcreteHandler2(Handler):
+    """
+    Handle request, otherwise forward it to the successor.
+    """
+
+    def handle_request(self, request):
+        if 'condition met':
+            'handle request'
+        elif self._successor is not None:
+            self._successor.handle_request(request)
+
+def main():
+    concrete_handler_1 = ConcreteHandler1()
+    concrete_handler_2 = ConcreteHandler2(concrete_handler_1)
+    concrete_handler_2.handle_request('request')
+
+if __name__ == '__main__':
+    main()
 ```
 
 ## example
